@@ -23,20 +23,40 @@ User - logs in -views packs - selects a plan
 <div class="header">
     <img src="/images/logo.png">
     <h2>Available Skill Packs</h2>
+
+    <!-- show logged in user name -->
+    <p>Welcome, ${sessionScope.loggedUser.name}!</p>
+
     <!-- logout button -->
-    <a href="/logout" style="
-        float: right;
-        margin-top: 10px;
-        padding: 8px 16px;
-        background-color: #e74c3c;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-    ">Logout</a>
+    <form action="/logout" method="post">
+        <input type="submit" value="Logout" style="
+            float: right;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        "/>
+    </form>
 </div>
+
 <div class="container">
     <h3>All Courses</h3>
+
+    <!-- search form -->
+    <form action="/packs" method="get">
+        <input type="text" name="search" placeholder="Search packs...">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- show error if duplicate subscription -->
+    <c:if test="${not empty error}">
+        <p style="color:red;">${error}</p>
+    </c:if>
+
     <!--  loop skill packs -->
     <c:forEach var="pack" items="${packs}">
         <div class="card">
@@ -47,12 +67,15 @@ User - logs in -views packs - selects a plan
             <!--  show price -->
             <b>₹ ${pack.price}</b>
             <br><br>
-            <!-- subscribe action -->
-            <a href="/subscribe?userId=1&packId=${pack.id}">
+            <!-- subscribe action using session userId -->
+            <a href="/subscribe?userId=${sessionScope.loggedUser.id}&packId=${pack.id}">
                 Subscribe
             </a>
         </div>
     </c:forEach>
+
+    <!-- show total subscriptions -->
+    <p>Your Total Subscriptions: ${subscriptionCount}</p>
 </div>
 </body>
 </html>
