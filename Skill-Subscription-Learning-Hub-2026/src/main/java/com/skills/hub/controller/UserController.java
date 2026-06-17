@@ -3,10 +3,11 @@ import com.skills.hub.model.User;
 import com.skills.hub.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpSession;
 /*
 =========================================================
 WHAT IS THIS FILE?
-Handles user actions like register and login
+Handles user actions like register, login and logout
 =========================================================
 */
 @Controller
@@ -40,17 +41,26 @@ public class UserController {
     }
     @PostMapping("/login")
     public String login(@RequestParam String email,
-                        @RequestParam String password) {
+                        @RequestParam String password,
+                        HttpSession session) {
         // STEP 1: call userService.login(email, password)
         User user = userService.login(email, password);
-        // STEP 2: if user != null → redirect /packs
+        // STEP 2: if user != null → save user in session → redirect /packs
         if (user != null) {
+            session.setAttribute("loggedInUser", user);
             return "redirect:/packs";
         }
- // STEP 3: else → return login page again
+        // STEP 3: else → return login page again
         else {
             return "login";
         }
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        // STEP 1: destroy the session (removes logged in user)
+        session.invalidate();
+        // STEP 2: redirect back to login page
+        return "redirect:/login";
     }
     public UserService getUserService() {
         return userService;
