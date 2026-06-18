@@ -1,15 +1,20 @@
 <!--
 	Why it is used:
+
 This page shows available training packs / courses / subscription plans.
+
 What it does:
 Displays list of courses or packages
 Shows price, duration, features
 Lets user choose a plan
 Why it is needed:
+
 This is the main business page of your system:
+
 It converts users into customers
 Helps users decide what to buy/enroll
 Simple flow:
+
 User - logs in -views packs - selects a plan
 -->
 <%@ page contentType="text/html;charset=UTF-8" %>
@@ -23,20 +28,24 @@ User - logs in -views packs - selects a plan
 <div class="header">
     <img src="/images/logo.png">
     <h2>Available Skill Packs</h2>
-    <!-- logout button -->
-    <a href="/logout" style="
-        float: right;
-        margin-top: 10px;
-        padding: 8px 16px;
-        background-color: #e74c3c;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-    ">Logout</a>
+    <!-- TASK: Display logged-in user's name from session -->
+    <p>Welcome, ${sessionScope.loggedUser.name}!</p>
+    <!-- TASK: Add logout button and link it to controller -->
+    <form action="/logout" method="post">
+        <button type="submit">Logout</button>
+    </form>
 </div>
 <div class="container">
     <h3>All Courses</h3>
+    <!-- TASK: Create search form and display search results -->
+    <form action="/packs" method="get">
+        <input type="text" name="search" placeholder="Search packs...">
+        <button type="submit">Search</button>
+    </form>
+    <!-- TASK: Show error message if duplicate subscription is attempted -->
+    <c:if test="${not empty error}">
+        <p style="color:red;">${error}</p>
+    </c:if>
     <!--  loop skill packs -->
     <c:forEach var="pack" items="${packs}">
         <div class="card">
@@ -48,11 +57,11 @@ User - logs in -views packs - selects a plan
             <b>₹ ${pack.price}</b>
             <br><br>
             <!-- subscribe action -->
-            <a href="/subscribe?userId=1&packId=${pack.id}">
-                Subscribe
-            </a>
+            <a href="/subscribe?userId=${sessionScope.loggedUser.id}&packId=${pack.id}">Subscribe</a>
         </div>
     </c:forEach>
+    <!-- TASK: Show subscription count for the current user -->
+    <p>Your Total Subscriptions: ${subscriptionCount}</p>
 </div>
 </body>
 </html>
